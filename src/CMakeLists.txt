@@ -4,6 +4,7 @@ foreach(T_FILE_NAME ${EXECUTABLE})
     string(REGEX REPLACE "\\.\\c\\c" "" EXECUTABLE_NAME ${T_FILE_NAME})
     string(REGEX REPLACE "\\.\/" "" EXECUTABLE_NAME ${EXECUTABLE_NAME})
     add_executable(${EXECUTABLE_NAME} ${T_FILE_NAME})
+    set(CMAKE_CXX_FLAGS "-g")
     target_link_libraries(
         ${EXECUTABLE_NAME}
         PRIVATE
