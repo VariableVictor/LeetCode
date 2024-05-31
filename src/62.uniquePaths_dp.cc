@@ -2,34 +2,47 @@
 
 class Solution
 {
-public:
+  public:
+    inline unsigned Cood2UI(unsigned i, unsigned j)
+    {
+      return (i << 8) + j;
+    }
+    inline void UI2Cood(unsigned uUI, unsigned &i, unsigned &j)
+    {
+      i = uUI >> 8;
+      j = uUI & 0xFF;
+    }
+
     int uniquePaths_dp(int m, int n)
     {
+
       int iTP = m + n - 2;//TotalStep
-      unordered_map<pair<int,int>,int> map_last,map_curr;
-      map_curr[pair(0,0)] = 1;
-      for(int is = 0; is < iTP; ++is)
+      unordered_map<unsigned, int> moG[2];
+      moG[0][0] = 1;
+      for(int i = 0; i < iTP; ++i)
       {
-        map_last = map_curr;
-        map_curr.clear();
-        for(auto iter = map_last.begin(); iter != map_last.end(); ++iter)
+        auto &m1 = moG[i % 2], &m2 = moG[(i + 1) % 2];
+        for(auto nd : m1)
         {
-          int value = iter->second;
-          int y = iter->first->first;
-          int x = iter->first->second;
-          if(y + 1 < m)
-            if(!map_curr.contains(pair(y+1,x)))
-              map_curr[pair(y+1,x)] = value;
+          int value = nd.second;
+          unsigned j,k;
+          UI2Cood(nd.first, j, k);
+
+          if(j < m - 1)
+            if(m2.contains(Cood2UI(j+1,k)))
+              m2[Cood2UI(j+1,k)] += value;
             else
-              map_curr[pair(y+1,x)] += value;
-          if(x + 1 < n)
-            if(!map_curr.contains(pair(y,x + 1)))
-              map_curr[pair(y,x+1)] = value;
+              m2[Cood2UI(j+1,k)] = value;
+
+          if(k < n - 1)
+            if(m2.contains(Cood2UI(j,k+1)))
+              m2[Cood2UI(j,k+1)] += value;
             else
-              map_curr[pair(y,x+1)] += value;
+              m2[Cood2UI(j,k+1)] = value;
         }
+        m1.clear();
       }
-      return map_curr.begin()->second;
+      return moG[iTP % 2].begin()->second;
     }
 };
 
